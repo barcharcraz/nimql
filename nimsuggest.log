@@ -1,0 +1,15 @@
+illformed AST: case sql_type of "B"
+illformed AST: case sql_type of "BLOB"
+illformed AST: case sql_type of "B"
+illformed AST: case sql_type of "B"
+illformed AST: case sql_type
+illformed AST: 
+of :
+illformed AST: 
+of :
+illformed AST: 
+of :
+illformed AST: 
+of :
+illformed AST: 
+of :

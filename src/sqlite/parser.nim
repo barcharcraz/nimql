@@ -1,18 +1,43 @@
-
-{.compile: "sqlite3.c" .}
-# this is a modified amalgamation, the actual api of sqlite is all private
-# but the parser has been exposed
-
-#void *sqlite3ParserAlloc(void*(*)(u64));
-#void sqlite3ParserFree(void*, void(*)(void*));
-#void sqlite3Parser(void*, int, Token, Parse*);
-
-type Token = object
-    z: ptr cchar ## not null terminated
-    n: cuint
+import sqlite3
+import db_sqlite
+import types
+import runtime
 
 
-proc ParserAlloc(malloc: proc (sz: uint64): Pointer {.cdecl.}): Pointer {.importc: "sqlite3ParserAlloc".}
-proc ParserFree(parser: Pointer, free: proc(mem: Pointer) {.cdecl.}) {.importc: "sqlite3ParserFree".}
-proc Parser(parser: Pointer, tokid: cint, tokenData: Token, pArg: Pointer) {.importc: "sqlite3Parser".}
 
+type ResultInfo* = object
+    names*: seq[string]
+    types*: seq[string]
+
+
+
+
+proc import_schema_sql*(sqlfile: string): PSqlite3 =
+    check open(":memory:", result)
+    var sql = readFile(sqlfile)
+    var errmsg: cstring
+    check exec(result, sql, nil, nil, errmsg)
+    free(errmsg)
+
+proc import_schema_db*(db: DbConn, sqlitefile: string) =
+    var conn: PSqlite3
+    check open(sqlitefile, conn)
+    for row in conn.rows(sql"SELECT sql FROM sqlite_master"):
+        db.exec(sql(row[0]))
+proc import_schema_db*(sqlitefile: string): PSqlite3 =
+    check open(":memory:", result)
+    import_schema_db(result, sqlitefile)
+proc parse_stmt(db: PSqlite3, stm: string): ResultInfo =
+    var statement: PStmt
+    check prepare_v2(db, stm, -1, statement, nil)
+    var count: int32
+    result.names = @[]
+    result.types = @[]
+    check column_count(statement)
+    for i in 0..<count:
+        var name = column_name(statement, i)
+        result.names.add($name)
+        var typ = column_decltype(statement, i)
+        result.types.add(db.nim_type($typ))
+    check finalize(statement)
+    
