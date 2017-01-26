@@ -24,4 +24,3 @@ proc gen_code(info: ResultInfo, statement: string): string =
         result_lines &= proc_construct_line.format(idx, typ)
     return result_lines.join("\n")
 
-proc parse

@@ -2,14 +2,14 @@
 ## the generated code
 import sqlite3
 import macros
-type SqliteError* = object of Exception
+import strutils
+import sqlite_utils
 
-proc check*(hr: int) =
-    if hr != SQLITE_OK:
-        raise newException(SqliteError, "Generic Sqlite Error")
+
 
 macro ql_generate*(database: static[string]): NimNode = 
     parseStmt(gorge("nimql_gen", database))
+
 
 # this is just to shut the compiler up, we don't care that there's no
 # implementers of ql_row yet
