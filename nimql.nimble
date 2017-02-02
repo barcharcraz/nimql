@@ -6,8 +6,8 @@ description   = "Nimql is a library to embed SQL queries directly into a nim pro
 license       = "MIT"
 
 srcDir = "src"
-bin = @["nimql/sqlite/cmdline.nim"]
+bin = @["nimql/sqlite/cmdline"]
 # Dependencies
 
 requires "nim >= 0.16.0"
-
+requires "docopt >= 0.6.4"

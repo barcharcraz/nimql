@@ -11,7 +11,9 @@ type ResultInfo* = object
     names*: seq[string]
     types*: seq[string]
 
-
+proc initResultInfo*(): ResultInfo =
+    result.names = @[]
+    result.types = @[]
 
 
 proc import_schema_sql(db: PSqlite3, sqlfile: string) =
