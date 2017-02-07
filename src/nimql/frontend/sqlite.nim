@@ -1,17 +1,15 @@
 import sqlite3
 import macros
 import strutils
-iterator row_iter(db: PSqlite3, query: static[string]): auto =
+iterator row*(db: PSqlite3, query: static[string]): auto =
     mixin ql_row
+    discard staticExec("cmdline gen \"$1\"".format(query))
     var stm: PStmt
     discard prepare_v2(db, $query, -1, stm, nil)
     while step(stm) == SQLITE_ROW:
         yield ql_row(db, query, stm)
-macro row*(db: PSqlite3, query: static[string]): untyped =
-    discard staticExec("cmdline gen \"$1\"".format(query))
-    result = quote do: row_iter(`db`, `query`)
 
-macro nimqlgen(): typed =
+macro nimqlgen*(): typed =
     result = parseStmt(staticExec("cmdline getall"))
 
 
