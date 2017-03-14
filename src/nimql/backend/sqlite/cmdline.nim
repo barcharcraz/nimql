@@ -7,6 +7,7 @@ Usage:
     nimql gen <query>
     nimql get <query>
     nimql getall
+    nimql queries
 """
 import docopt
 import os
@@ -14,6 +15,7 @@ import db_sqlite
 import nimql_gen
 import parser
 import sequtils
+import strutils
 import logging
 import parsecfg
 import sqlite_utils
@@ -48,3 +50,6 @@ proc do_cmdline*() =
     if args["getall"]:
         for row in db.rows(sql"SELECT code from ql_code where language='nim'"):
             echo row[0]
+    if args["queries"]:
+        for row in db.rows(sql"SELECT id, query FROM ql_queries"):
+            echo "$1: $2".format(row[0], row[1])
