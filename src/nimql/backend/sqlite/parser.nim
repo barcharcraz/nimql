@@ -57,6 +57,8 @@ proc import_schema_db*(sqlitefile: string): PSqlite3 =
 proc parse_inputs(stm: PStmt): InputInfo =
     var count = bind_parameter_count(stm)
     result.names = @[]
+    # inputs don't really have types (or rather they are determined on the nim side)
+    # still we'll keep this field just in case
     result.types = @[]
     for i in 0..<count:
         var name = bind_parameter_name(stm, i)

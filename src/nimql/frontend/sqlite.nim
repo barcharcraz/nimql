@@ -1,6 +1,9 @@
 import sqlite3
 import macros
 import strutils
+
+
+
 iterator row*(db: PSqlite3, query: static[string]): auto =
     mixin ql_row
     discard staticExec("cmdline gen \"$1\"".format(query))
