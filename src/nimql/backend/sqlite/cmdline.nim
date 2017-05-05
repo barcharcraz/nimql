@@ -21,7 +21,8 @@ proc find_metadata_dir(): string =
     for dir in getCurrentDir().parentDirs:
         if existsDir(dir / ".nimql"):
              return dir / ".nimql"
-
+    
+    
 
 let args = docopt(doc, version = "Sqlite Generator 0.1.0")
 
@@ -29,6 +30,7 @@ let db = db_sqlite.open(find_metadata_dir() / "metadata.db", "", "", "")
 let config = loadConfig(find_metadata_dir() / "config.cfg")
 db.exec(sql"PRAGMA foreign_keys = ON")
 var logger = newConsoleLogger()
+
 add_handler(logger)
 if args["gen"]:
     db.exec(sql"ATTACH DATABASE ':memory:' as ddl_info")

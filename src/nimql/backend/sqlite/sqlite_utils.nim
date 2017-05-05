@@ -23,12 +23,11 @@ template check*(db: PSqlite3, code: typed) =
         dbError(db)
 
 
-    
+
 type Backup = object
 type PBackup = ptr Backup
 
-
-proc sqlite3_backup_init(dest: PSqlite3, destName: cstring, src: PSqlite3, srcName: cstring): PBackup 
+proc sqlite3_backup_init(dest: PSqlite3, destName: cstring, src: PSqlite3, srcName: cstring): PBackup
   {.importc, dynlib: Lib.}
 proc sqlite3_backup_step(p: PBackup, npage: cint): cint {.importc, dynlib: Lib}
 proc sqlite3_backup_finish(p: PBackup): cint {.importc, dynlib: Lib.}

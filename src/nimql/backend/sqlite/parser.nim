@@ -7,6 +7,7 @@ import logging
 import strutils
 import sqlite_utils
 
+
 type ResultInfo* = object
     names*: seq[string]
     types*: seq[string]
@@ -23,9 +24,12 @@ proc import_schema_sql(db: PSqlite3, sqlfile: string) =
     check db, exec(db, sql, nil, nil, errmsg)
     free(errmsg)
 
+
+
 proc import_schema_sql*(sqlfile: string): PSqlite3 =
     check(result): open(":memory:", result)
     import_schema_sql(result, sqlfile)
+
 
 proc import_schema_dir*(dir: string): PSqlite3 =
     check(result): open(":memory:", result)
@@ -55,4 +59,3 @@ proc parse_stmt*(db: PSqlite3, stm: string): ResultInfo =
         var typ = column_decltype(statement, i)
         result.types.add(db.nim_type($typ))
     check(db): finalize(statement)
-    
