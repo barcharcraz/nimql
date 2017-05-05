@@ -12,6 +12,14 @@ type ResultInfo* = object
     names*: seq[string]
     types*: seq[string]
 
+type InputInfo* = object
+    names*: seq[string]
+    types*: seq[string]
+
+type QueryInfo* = object
+    results*: ResultInfo
+    inputs*: InputInfo
+
 proc initResultInfo*(): ResultInfo =
     result.names = @[]
     result.types = @[]
@@ -47,6 +55,17 @@ proc import_schema_db*(db: DbConn, sqlitefile: string) =
 proc import_schema_db*(sqlitefile: string): PSqlite3 =
     check(result): open(":memory:", result)
     import_schema_db(result, sqlitefile)
+
+proc parse_inputs(stm: PStmt): InputInfo =
+    var count = bind_parameter_count(stm)
+    result.names = @[]
+    # inputs don't really have types (or rather they are determined on the nim side)
+    # still we'll keep this field just in case
+    result.types = @[]
+    for i in 0..<count:
+        var name = bind_parameter_name(stm, i)
+        result.names.add($name)
+
 proc parse_stmt*(db: PSqlite3, stm: string): ResultInfo =
     var statement: PStmt
     check db, prepare_v2(db, stm, -1, statement, nil)
