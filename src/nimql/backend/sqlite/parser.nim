@@ -1,7 +1,6 @@
 import sqlite3
 import db_sqlite
 import types
-import runtime
 import os
 import logging
 import strutils
@@ -31,6 +30,7 @@ proc import_schema_sql(db: PSqlite3, sqlfile: string) =
     var errmsg: cstring
     check db, exec(db, sql, nil, nil, errmsg)
     free(errmsg)
+
 
 
 
